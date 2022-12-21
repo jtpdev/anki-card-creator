@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anki card creator</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        let from = 'en';
+        let to = 'pt';
+
+        const changeFrom = (e) => {
+            from = e.target.value
+        }
+
+        const changeTo = (e) => {
+            to = e.target.value
+        }
+
+        const color = () => {
+            return "#" + Math.floor(Math.random() * 16777215).toString(16);
+        }
+
+        const search = () => {
+
+            let words = document.getElementById("words").value.split(/\r?\n|\r|\n/g).join(',');
+
+            axios.get('/msearch', {
+                params: {
+                    words,
+                    from,
+                    to
+                }
+            }).then(function (response) {
+                document.getElementById("result").innerHTML = `<div class="result-wrapper">${response.data.map(d => {
+                    return `
+                        <h1>${d.word}</h1>
+                        <div class="data" style="background-color:${color()}">
+                            <h2>Front:</h2>
+                            <div id="front">${d.samples.map(s => s.from ? `<p>${s.from}</p><p>${s.to}</p>` : `<p>${s.text}</p>`).join("<hr/>")}</div>
+                            <h2>Back:</h2>
+                            <div id="back">${`<p><strong>${d.word.toLowerCase()}</strong> ${d.phonetic}</p><br/><div class="translationc">${d.translations.map(t => `<p>${t}</p>`).join("<hr/>")}</div>`}</div>
+                        </div>
+                    `
+                }).join("<hr/>")}</div>`
+            })
+        }
+    </script>
+    <style>
+        body {
+            background-color: #dbdbdb;
+        }
+
+        div#result {
+            height: 80vh;
+            overflow: auto;
+        }
+
+        div.data {
+            height: 60vh;
+            overflow: auto;
+        }
+
+        div#front,
+        div#back {
+            height: 30vh;
+            overflow: auto;
+            background-color: #c6c6c6;
+            margin: 8px;
+        }
+
+        .words-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .selectors {
+            display: flex;
+        }
+
+        button {
+            height: 64px;
+            background-color: #010101;
+            color: #dddddd;
+            font-size: 28px;
+        }
+
+        button:hover {
+            cursor: pointer;
+            background-color: #181818;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            margin-bottom: 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 2px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px grey;
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #33383D;
+            border-radius: 10px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1C1E21;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="words-content">
+        <h4>Words:</h4>
+        <p>Separate words by line</p>
+        <textarea id="words"></textarea>
+        <div class="selectors">
+            <select name="from" id="from" onchange="changeFrom">
+                <option value="en" selected>English</option>
+                <option value="pt">Português</option>
+                <option value="es">Español</option>
+                <option value="it">Italiano</option>
+                <option value="fr">Français</option>
+            </select>
+            <select name="to" id="to" onchange="changeTo">
+                <option value="en">English</option>
+                <option value="pt" selected>Português</option>
+                <option value="es">Español</option>
+                <option value="it">Italiano</option>
+                <option value="fr">Français</option>
+            </select>
+        </div>
+        <button onclick="search()">Pesquisar</button>
+    </div>
+    <div id="result">
+
+    </div>
+</body>
+
+</html>
