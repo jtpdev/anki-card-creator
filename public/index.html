@@ -34,9 +34,9 @@
                     to
                 }
             }).then(function (response) {
-                document.getElementById("result").innerHTML = `<div class="result-wrapper">${response.data.map(d => {
+                document.getElementById("result").innerHTML = `<div class="result-wrapper">${response.data.map((d, i) => {
                     return `
-                        <h1>${d.word}</h1>
+                        <h1>${i + 1} - ${d.word}</h1>
                         <div class="data" style="background-color:${color()}">
                             <h2>Front:</h2>
                             <div id="front">${d.samples.map(s => s.from ? `<p>${s.from}</p><p>${s.to}</p>` : `<p>${s.text}</p>`).join("<hr/>")}</div>

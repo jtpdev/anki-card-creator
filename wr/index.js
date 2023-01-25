@@ -11,11 +11,16 @@ import validateLanguage from './lib/validate-language.js';
  * @return {Object}      Object with the word data
  */
 
+function proccessWord(word) {
+  return word.trim().toLowerCase()
+}
+
 export default async (word, from = 'en', to = 'pt') => {
   validateLanguage(from)
   validateLanguage(to)
   // Set the url
-  var url = `http://www.wordreference.com/${from}${to}/${word.trim()}`
+  const proccessedWord = proccessWord(word)
+  var url = `http://www.wordreference.com/${from}${to}/${proccessedWord}`
   // Make the request
   const response = await fetch(url)
   var html = await response.text();
