@@ -40,13 +40,43 @@
                         <div class="data" style="background-color:${color()}">
                             <h2>Front:</h2>
                             <div id="front">${d.samples.map(s => s.from ? `<p>${s.from}</p><p>${s.to}</p>` : `<p>${s.text}</p>`).join("<hr/>")}</div>
-                            <h2>Back:</h2>
+                            <div id="back-header">
+                                <h2>Back:</h2>
+                                <button id="copyButton">
+                                    Copiar
+                                </button>
+                            </div>
                             <div id="back">${`<p><strong>${d.word.toLowerCase()}</strong> ${d.phonetic}</p><br/><div class="translationc">${d.translations.map(t => `<p>${t}</p>`).join("<hr/>")}</div>`}</div>
                         </div>
                     `
                 }).join("<hr/>")}</div>`
             })
+
+            setInterval(() => {
+                document.getElementById('copyButton').addEventListener('click', function () {
+                    var range = document.createRange();
+                    range.selectNode(document.getElementById('back'));
+
+                    window.getSelection().removeAllRanges(); // Limpa seleções existentes
+                    window.getSelection().addRange(range); // Adiciona o range criado
+
+                    try {
+                        // Executa a ação de copiar
+                        var successful = document.execCommand('copy');
+                        var msg = successful ? 'Copiado com sucesso!' : 'Falha ao copiar.';
+                        console.log(msg);
+                    } catch (err) {
+                        console.log('Erro ao copiar');
+                    }
+
+                    // Limpa a seleção após a cópia
+                    window.getSelection().removeAllRanges();
+                });
+
+            }, 1000);
+
         }
+
     </script>
     <style>
         body {
@@ -98,6 +128,16 @@
         h4,
         h5 {
             margin-bottom: 0;
+        }
+
+        div#back-header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button#copyButton {
+            height: 32px;
+            font-size: 14px;
         }
 
         ::-webkit-scrollbar {
