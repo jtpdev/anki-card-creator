@@ -11,12 +11,12 @@
         let from = 'en';
         let to = 'pt';
 
-        const changeFrom = (e) => {
-            from = e.target.value
+        const changeFrom = () => {
+            from = document.getElementById("from").value
         }
 
-        const changeTo = (e) => {
-            to = e.target.value
+        const changeTo = () => {
+            to = document.getElementById("to").value
         }
 
         const color = () => {
@@ -42,38 +42,38 @@
                             <div id="front">${d.samples.map(s => s.from ? `<p>${s.from}</p><p>${s.to}</p>` : `<p>${s.text}</p>`).join("<hr/>")}</div>
                             <div id="back-header">
                                 <h2>Back:</h2>
-                                <button id="copyButton">
+                                <button id="${i + 1}_copyButton" class="copyButton">
                                     Copiar
                                 </button>
                             </div>
-                            <div id="back">${`<p><strong>${d.word.toLowerCase()}</strong> ${d.phonetic}</p><br/><div class="translationc">${d.translations.map(t => `<p>${t}</p>`).join("<hr/>")}</div>`}</div>
+                            <div id="${i + 1}_back" class="back">${`<p><strong>${d.word.toLowerCase()}</strong> ${d.phonetic}</p><br/><div class="translationc">${d.translations.map(t => `<p>${t}</p>`).join("<hr/>")}</div>`}</div>
                         </div>
                     `
                 }).join("<hr/>")}</div>`
+
+                for (let i = 0; i < response.data.length; i++) {
+                    
+                    document.getElementById(`${i + 1}_copyButton`).addEventListener('click', function () {
+                        var range = document.createRange();
+                        range.selectNode(document.getElementById(`${i + 1}_back`));
+    
+                        window.getSelection().removeAllRanges();
+                        window.getSelection().addRange(range);
+    
+                        try {
+                            var successful = document.execCommand('copy');
+                            var msg = successful ? 'Copiado com sucesso!' : 'Falha ao copiar.';
+                            console.log(msg);
+                        } catch (err) {
+                            console.log('Erro ao copiar');
+                        }
+    
+                        // Limpa a seleção após a cópia
+                        window.getSelection().removeAllRanges();
+                    });
+                }
+                
             })
-
-            setInterval(() => {
-                document.getElementById('copyButton').addEventListener('click', function () {
-                    var range = document.createRange();
-                    range.selectNode(document.getElementById('back'));
-
-                    window.getSelection().removeAllRanges(); // Limpa seleções existentes
-                    window.getSelection().addRange(range); // Adiciona o range criado
-
-                    try {
-                        // Executa a ação de copiar
-                        var successful = document.execCommand('copy');
-                        var msg = successful ? 'Copiado com sucesso!' : 'Falha ao copiar.';
-                        console.log(msg);
-                    } catch (err) {
-                        console.log('Erro ao copiar');
-                    }
-
-                    // Limpa a seleção após a cópia
-                    window.getSelection().removeAllRanges();
-                });
-
-            }, 1000);
 
         }
 
@@ -94,7 +94,7 @@
         }
 
         div#front,
-        div#back {
+        div.back {
             height: 30vh;
             overflow: auto;
             background-color: #c6c6c6;
@@ -135,7 +135,7 @@
             justify-content: space-between;
         }
 
-        button#copyButton {
+        button.copyButton {
             height: 32px;
             font-size: 14px;
         }
@@ -169,14 +169,14 @@
         <p>Separate words by line</p>
         <textarea id="words"></textarea>
         <div class="selectors">
-            <select name="from" id="from" onchange="changeFrom">
+            <select name="from" id="from" onchange="changeFrom()">
                 <option value="en" selected>English</option>
                 <option value="pt">Português</option>
                 <option value="es">Español</option>
                 <option value="it">Italiano</option>
                 <option value="fr">Français</option>
             </select>
-            <select name="to" id="to" onchange="changeTo">
+            <select name="to" id="to" onchange="changeTo()">
                 <option value="en">English</option>
                 <option value="pt" selected>Português</option>
                 <option value="es">Español</option>
